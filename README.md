@@ -295,6 +295,7 @@ Vegeu, per exemple, https://pip.pypa.io/en/stable/user_guide/#requirements-files
     1. Estudieu la informació sobre [l'estat del trànsit als trams](https://opendata-ajuntament.barcelona.cat/data/ca/dataset/trams)  de la ciutat de Barcelona.
     1. Seguiu el [tutorial de staticmaps](https://lliçons.jutge.org/python/fitxers-i-formats.html).
     1. Proveu de generar una imatge dels trams de Barcelona, fent que el seu color mostri la seva congestió.
+    1. Proveu de generar un camí mínim entre dos punts de Barcelona (sense usar ispeed) i pinteu-lo en un mapa.
     1. Penseu com implementareu el concepte de *ispeed*.
     1. Dissenyeu el mòdul `igo` tot definint els seus tipus de dades i les capçaleres de les seves funcions públiques.
     1. Implementeu el mòdul `igo` i provant les funcions a mesura que les escriviu.
