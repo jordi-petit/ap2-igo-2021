@@ -1,6 +1,6 @@
 # iGo
 
-No perdeu més el temps: iGo us ensenya el camí més ràpid! 🐰🚘
+No perdeu més el temps: iGo us ensenya el camí més ràpid per córrer com una llebre! 🐰🚘
 
 
 ## Introducció
@@ -10,18 +10,18 @@ curs 2021 d'AP2 al GCED.
 
 La vostra tasca consisteix en implementar en Python
 un Bot de Telegram que permeti guiar als seus usuaris fins a la seva
-destinació pel camí més ràpid en cotxe, utilitzant el novedós concepte d'*ispeed*
-(velocitat intel·ligent) que té en compte l'estat del trànsit en temps real a
+destinació pel camí més ràpid en cotxe, utilitzant el novedós concepte d'*itime*
+(temps intel·ligent) que té en compte l'estat del trànsit en temps real en
 certs trams de la ciutat de Barcelona.
 
 Per fer aquesta pràctica, haureu d'obtenir dades de diferents proveïdors
 i enllaçar-les conjuntament. En particular, utilitzareu:
 
-- El mapa de Barcelona d'[Open Street Map](https://www.openstreetmap.org).
+- El mapa de Barcelona d'[Open Street Map](https://www.openstreetmap.org). 🧭
 
-- La [informació sobre l'estat del trànsit als trams](https://opendata-ajuntament.barcelona.cat/data/ca/dataset/trams)  de la ciutat de Barcelona.
+- La [informació sobre l'estat del trànsit als trams](https://opendata-ajuntament.barcelona.cat/data/ca/dataset/trams)  de la ciutat de Barcelona. 🐌
 
-- La [relació de trams de la via pública](https://opendata-ajuntament.barcelona.cat/data/ca/dataset/transit-relacio-trams)  de la ciutat de Barcelona.
+- La [relació de trams de la via pública](https://opendata-ajuntament.barcelona.cat/data/ca/dataset/transit-relacio-trams)  de la ciutat de Barcelona. 🛣
 
 Afortunadament, existeixen algunes llibreries ben documentades que us facilitaran molt la feina:
 
@@ -48,7 +48,7 @@ Teniu informació sobre l'ús d'aquest mòdul en
 
 Els sistema consta dels mòduls següents:
 
-- `igo.py` conté tot el codi i estrictures de dades relacionats amb
+- `igo.py` conté tot el codi i estructures de dades relacionats amb
 l'adquisició i l'enmagatzematge de grafs corresponents a mapes, congestions i
 càlculs de rutes.  Aquest mòdul no en sap res del bot.
 
@@ -60,16 +60,105 @@ fàcilment el projecte a noves plataformes en el futur (web, whatsapp…), quan 
 tots plegats ens fem rics! 🤑
 
 
-
 ## Funcionalitat del mòdul `igo`
 
 Heu de dissenyar el mòdul `igo`  per tal contingui tot el codi relacionat amb
 l'adquisició, l'enmagatzematge i la consulta dels grafs de carrers de la
 ciutat, dels seus trams, i del trànsit en aquests trams. A més, aquest mòdul
 ha de ser capaç de calcular camins mínims entre parells de punts a la ciutat,
-tot utilitzant el concepte de *ispeed* que més tard es concreta. Aquest mòdul
+tot utilitzant el concepte de *itime* que més tard es concreta. Aquest mòdul
 també ha de ser capaç de generar imatges amb els camins mínims que s'han
 calculat.
+
+El programa d'exemple següent us dóna una pauta per dissenyar els tipus i les funcions
+d'aquest mòdul, però no és estrictament necessari que seguiu aquesta interfície, teniu
+llibertat completa.
+
+```python
+PLACE = 'Barcelona, Catalonia'
+GRAPH_FILENAME = 'barcelona.graph'
+SIZE = 800
+HIGHWAYS_URL = 'https://opendata-ajuntament.barcelona.cat/data/dataset/1090983a-1c40-4609-8620-14ad49aae3ab/resource/1d6c814c-70ef-4147-aa16-a49ddb952f72/download/transit_relacio_trams.csv'
+CONGESTIONS_URL = 'https://opendata-ajuntament.barcelona.cat/data/dataset/8319c2b1-4c21-4962-9acd-6db4c5ff1148/resource/2d456eb5-4ea6-4f68-9794-2f3f1a58a933/download'
+
+Highway = collections.namedtuple('Highway', '...') # Tram
+Congestion = collections.namedtuple('Congestion', '...')
+
+def test():
+    # load/download graph (using cache) and plot it on the screen
+    if not exists_graph(GRAPH_FILENAME):
+        graph = download_graph(PLACE)
+        save_graph(graph, GRAPH_FILENAME)
+    else:
+        graph = load_graph(GRAPH_FILENAME)
+    plot_graph(graph)
+
+    # download highways and plot them into a PNG image
+    highways = download_highways(HIGHWAYS_URL)
+    plot_highways(highways, 'highways.png', SIZE)
+
+    # download congestions and plot them into a PNG image
+    congestions = download_congestions(CONGESTIONS_URL)
+    plot_congestions(highways, congestions, 'congestions.png', SIZE)
+
+    # get the 'intelligent graph' version of a graph taking into account the congestions of the highways
+    igraph = build_igraph(graph, highways, congestions)
+
+    # get path between two addresses and plot it into a PNG image
+    path = get_shortest_path_with_ispeeds(igraph, "Campus Nord", "Sagrada Família")
+    plot_path(igraph, path, SIZE)
+```
+
+
+Per tal de predir el camí més ràpid entre dos punts, iGo utilitza un concepte de
+temps intel·ligent anomenat *itime*. Aquest concepte apareix de la integració de
+diferents dades disponibles a les dades obertes que el projecte utilitza:
+
+- Velocitat de cada carrer al graf d'OSMnx: Cada aresta del graf de la ciutat té
+un atribut `speed` que indica la velocitat màxima en aquella aresta i un atribut
+`length` que indica la seva llargada. Per tant, és fàcil deduir el temps necessari per
+recórrer aquella aresta en condicions de circulació òptima.
+
+- La relació de trams de la via pública de la ciutat de Barcelona
+defineix un conjunt de trams amb les artèries de circulació més importants de la ciutat.
+Cada tram ve definit per una seqüència de segments, dels quals es dónen les coordenades
+dels seus extrems. Al codi anterior, els trams es corresponen a les *highways*: malgrat
+que no siguin autopistes, solen ser pistes ràpides a la ciutat.
+
+- La informació sobre l'estat del trànsit als trams de la ciutat de Barcelona
+dóna (en temps real) la congestió existent a cadascun dels trams. Aquest estat
+pot ser: sense dades, molt fluid, fluid, dens, molt dens, congestió, tallat.
+
+Malauradament, la informació dels trams que ens proporciona l'ajuntament no quadra
+completament amb els carrers d'OSM... I tampoc hi ha informació de la congestió
+per a tots els carrers de la ciutat, només per a alguns.
+Per tant, cal trobar alguna forma per transportar les dades de congestió dels
+trams als carrers d'OSMnx. Aquesta propagació de les congestions s'hauria
+d'acabar materialitzant en un nou atribut `itime` a cada aresta del graf,
+sobre el qual es calcularan els camins mínims.
+
+La forma de propagar les congestions és la següent:
+Per a cada segment de cada
+tram pel qual es disposi de congestió, es buscaràn els dos nodes del graf que
+siguin més propers als extrems d'aquests segments, i es trobarà  el camí amb
+distància mínima per anar entre ambdós en el graf. A tots els arcs d'aquest
+camí se'ls imputarà la congestió del tram.
+
+A més, **opcionalment**, també podeu afegir un retard a cada cruïlla de carrers:
+Aquest retard hauria de ser petit si la cruïlla s'atravessa del dret (gir de
+menys de 15°, diguem) i hauria de ser més gran si cal girar a la cruïlla
+(gir de més de 15°). A més, també ho podeu millorat tenint en compte que
+girar cap a l'esquerra sol ser més lent que girar cap a la dreta. El grafs
+d'OSMnx tenen atributs amb l'angle de les arestes (*bearings*) que us poden
+ser útils per això. En aquest cas és probable que us convingui modificar
+la topologia (nodes i arcs) del graf.
+
+Evidentment, cada implementació dels *itime* tindrà uns paràmetres associats
+que vosaltres haureu de definir i encapsular de forma adient (amb ús de
+constants o funcions, per exemple).
+
+Com s'ha vist al programa d'exemple, és raonable oferir una funció que
+s'encarregui  de calcular el graf amb atributs "intel·ligents".
 
 
 ## Funcionalitat del mòdul `bot`
@@ -103,61 +192,8 @@ actual (real o falsejada amb `/pos`) fins al seu destí. Quan sigui necessari,
 el Bot recarregarà les dades sobre la congestió dels trams, per tal
 d'adaptar-se al trànsit en temps real.
 
-Totes les comandes han de funcionar per a diferents usuaris alhora.
-
-
-## *ispeed:* La velocitat intel·ligent
-
-Per tal de predir el camí més ràpid entre dos punts, iGo utilitza un concepte de
-velocitat intel·ligent anomenat *ispeed*. Aquest concepte apareix de la integració de
-diferents dades disponibles a les dades obertes que el projecte utilitza:
-
-- Velocitat de cada carrer al graf d'OSMnx: Cada aresta del graf de la ciutat té
-un atribut `speed` que indica la velocitat màxima en aquella aresta i un atribut
-`length` que indica la seva llargada. Per tant, és fàcil deduir el temps necessari per
-recórrer aquella aresta en condicions de circulació òptima.
-
-- La relació de trams de la via pública de la ciutat de Barcelona
-defineix un conjunt de trams amb les artèries de circulació més importants de la ciutat.
-Cada tram ve definit per una seqüència de segments, dels quals es dónen les coordenades
-dels seus extrems.
-
-- La informació sobre l'estat del trànsit als trams de la ciutat de Barcelona
-dóna (en temps real) la congestió existent a cadascun dels trams. Aquest estat
-pot ser: sense dades, molt fluid, fluid, dens, molt dens, congestió, tallat.
-
-Malauradament, la informació dels trams que ens proporciona l'ajuntament no quadra
-completament amb els carrers d'OSM... I tampoc hi ha informació de la congestió
-per a tots els carrers de la ciutat, només per a alguns.
-
-Per tant, cal trobar alguna forma per transportar les dades de congestió dels
-trams als carrers d'OSMnx.  Aquesta propagació de les congestions s'hauria
-d'acabar materialitzant en un nou atribut `ispeed` a cada aresta del graf,
-sobre el qual es calcularan els camins mínims.
-
-Una forma de fer-ho és relacionant cada aresta del mapa amb al segment de tram més
-pròxim i propagant-ne la congestió (a no ser que el segment més pròxim sigui
-massa llunyà). Això es pot fer de forma senzilla considerant que cada aresta
-del mapa i cada segment de tram es poden idealitzar a través del seu punt
-mig, i llavors reduim el problema a trobar la distància del punt mig de cada
-aresta al punt mig d'un segment de tram.
-
-Hi ha moltes altres maneres raonables de calcular l'atribut  `ispeed` de les
-arestes del graf. Sou lliures de fer-ho, a condició de deixar ben documentat
-com ho feu i de raonar quins en són els seus avantatges i desavantatges.
-
-A més, opcionalment, també podeu afegir un retard a cada cruïlla de carrers.
-Aquest retard hauria de ser petit si la cruïlla s'atravessa del dret (gir de
-menys de 15 graus, diguem) i hauria de ser més gran si cal girar a la cruïlla
-(gir de més de 15 graus). A més, també ho podeu millorat tenint en compte que
-girar cap a l'esquerra sol ser més lent que girar cap a la dreta. El grafs
-d'OSMnx tenen atributs amb l'angle de les arestes (*bearings*) que us poden
-ser útils per això.
-
-Evidentment, cada implementació de la *ispeed* tindrà uns paràmetres associats
-que vosaltres haureu de definir de forma adient (amb ús de constants, per
-exemple).
-
+Totes les comandes han de funcionar per a diferents usuaris alhora i les accions
+d'un usuari no han d'interferir amb els altres usuaris.
 
 
 ## Llibreries
@@ -187,14 +223,17 @@ són estàndards, heu de demanar permís als vostres professors (que segurament 
 us el donaran).
 
 
+
 ## Indicacions per treballar amb els grafs d'OSMnx
 
 Els grafs d'OSMnx tenen molta informació i triguen molt a carregar. Per aquest
-aplicació, demaneu-los per a cotxe i simplificats. A més, descarregeu-los el
+aplicació, demaneu-los per a cotxe i simplificats i elimineu els arcs múltiples.
+A més, descarregeu-los el
 primer cop i deseu-los amb Pickle:
 
 ```Python
 graph = osmnx.graph_from_place("Barcelona, Catalonia", network_type='drive', simplify=True)
+graph = osmnx.utils_graph.get_digraph(graph, weight='length')
 with open('barcelona.graph', 'wb') as file:
     pickle.dump(graph, file)
 ```
@@ -214,18 +253,37 @@ Aquesta és la manera de recórrer tots els nodes i les arestes d'un graf:
 for node1, info1 in graph.nodes.items():
     print(node1, info1)
     # for each adjacent node and its information...
-    for node2, info2 in graph.adj[node1].items():
+    for node2, edge in graph.adj[node1].items():
         print('    ', node2)
-        # osmnx graphs are multigraphs, but we will just consider their first edge
-        edge = info2[0]
         print('        ', edge)
 ```
 
-De forma molt infreqüent, els grafs d'OSMnx tenen multi-arestes. El codi
-anterior les ignora tot quedant-se amb la primera aresta; feu el mateix.
 Compte: a vegades hi ha sorpreses: carrers amb més d'un nom,
 valors absents o nuls...
 
+A banda, segurament voldreu utilitzar aquestes funcions per treballar amb grafs:
+
+- [`get_nearest_node`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=get_nearest_node#osmnx.distance.get_nearest_node)
+- [`shortest_path`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=shortest_path#osmnx.distance.shortest_path)
+- [`geocode`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=geocode#osmnx.geocoder.geocode)
+- [`plot_graph`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=plot_graph#osmnx.plot.plot_graph)
+- [`add_edge_bearings`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=add_edge_bearings#osmnx.bearing.add_edge_bearings)
+
+
+## Indicacions per llegirs URLs en CSV
+
+Aquest fragment de codi us pot ajudar per llegir dades en CSV descarregades
+d'una web:
+
+```python
+with urllib.request.urlopen(HIGHWAYS_URL) as response:
+    lines = [l.decode('utf-8') for l in response.readlines()]
+    reader = csv.reader(lines, delimiter=',', quotechar='"')
+    next(reader)  # ignore first line with description
+    for line in reader:
+        way_id, description, coordinates = line
+        print(way_id, description, coordinates)
+```
 
 
 # Instruccions
@@ -276,12 +334,12 @@ L'ús de tabuladors en el codi queda
 prohibit (zero directe). Si voleu, podeu fer ratlles més llargues que les que dicta PEP8.
 
 El projecte ha de contenir un fitxer `README.md`
-que el documenti. Vegeu, per exemple, https://gist.github.com/PurpleBooth/109311bb0361f32d87a2.
+que el documenti. Vegeu, per exemple, https://www.makeareadme.com/.
 Si us calen imatges al `README.md`, deseu-los com a fitxers PNG.
 
 El projecte també ha de contenir un fitxer `requirements.txt`
 amb les llibreries que utilitza el vostre projecte per poder-lo instal·lar.
-Vegeu, per exemple, https://pip.pypa.io/en/stable/user_guide/#requirements-files.
+Vegeu, per exemple, https://www.idkrtm.com/what-is-the-python-requirements-txt/.
 
 
 
@@ -290,16 +348,27 @@ Vegeu, per exemple, https://pip.pypa.io/en/stable/user_guide/#requirements-files
 - Us suggerim seguir aquests passos per a dur a terme el vostre projecte:
 
     1. Seguiu el [tutorial de networkx](https://networkx.github.io/documentation/stable/tutorial.html).
+
     1. Seguiu el [tutorial de osmnx](https://geoffboeing.com/2016/11/osmnx-python-street-networks/).
+
     1. Estudieu el format de la relació de [trams de la via pública](https://opendata-ajuntament.barcelona.cat/data/ca/dataset/trams) de la ciutat de Barcelona.
+
     1. Estudieu la informació sobre [l'estat del trànsit als trams](https://opendata-ajuntament.barcelona.cat/data/ca/dataset/trams)  de la ciutat de Barcelona.
+
     1. Seguiu el [tutorial de staticmaps](https://lliçons.jutge.org/python/fitxers-i-formats.html).
-    1. Proveu de generar una imatge dels trams de Barcelona, fent que el seu color mostri la seva congestió.
-    1. Proveu de generar un camí mínim entre dos punts de Barcelona (sense usar ispeed) i pinteu-lo en un mapa.
-    1. Penseu com implementareu el concepte de *ispeed*.
+
     1. Dissenyeu el mòdul `igo` tot definint els seus tipus de dades i les capçaleres de les seves funcions públiques.
-    1. Implementeu el mòdul `igo` i provant les funcions a mesura que les escriviu.
+
+    1. Implementeu el mòdul `igo`
+       però sense implementar encara el concepte de *itime*. Si seguiu la pauta, implementeu cada funció `load_x`
+       i proveu-la amb la corresponent `plot_x`.
+       Useu un [*stub*](https://ca.wikipedia.org/wiki/Stub_(software_testing))
+       per a `build_igraph` que essencialment no faci res.
+
+    1. Implementareu el concepte de *itime* fent el `build_igraph` real.
+
     1. Seguiu el [tutorial de telegram](https://lliçons.jutge.org/python/telegram.html).
+
     1. Implementeu el mòdul `bot` i proveu-lo.
 
 -  Documenteu el codi a mesura que l'escriviu.
