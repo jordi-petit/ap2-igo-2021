@@ -362,6 +362,7 @@ Vegeu, per exemple, https://www.idkrtm.com/what-is-the-python-requirements-txt/.
     (hi ha altres coses, centreu-vos en la darrera secció).
 
     1. Dissenyeu el mòdul `igo` tot definint els seus tipus de dades i les capçaleres de les seves funcions públiques.
+        Feu-vos un esquema de les diferents funcions i crides entre elles.
 
     1. Implementeu el mòdul `igo`
        però sense implementar encara el concepte de *itime*. Si seguiu la pauta, implementeu cada funció `load_x`
