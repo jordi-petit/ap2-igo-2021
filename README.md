@@ -224,7 +224,7 @@ us el donaran).
 
 ## Indicacions per treballar amb els grafs d'OSMnx
 
-Els grafs d'OSMnx tenen molta informació i triguen molt a carregar. Per aquest
+Els grafs d'OSMnx tenen molta informació i triguen molt a carregar. Per aquesta
 aplicació, demaneu-los per a cotxe i simplificats i elimineu els arcs múltiples.
 A més, descarregeu-los el
 primer cop i deseu-los amb Pickle:
@@ -257,7 +257,7 @@ for node1, info1 in graph.nodes.items():
 ```
 
 Compte: a vegades hi ha sorpreses: carrers amb més d'un nom,
-valors absents o nuls...
+valors absents o nuls... Molt divertit!
 
 A banda, segurament haureu d'utilitzar aquestes funcions per treballar amb grafs:
 
@@ -268,7 +268,7 @@ A banda, segurament haureu d'utilitzar aquestes funcions per treballar amb grafs
 - [`add_edge_bearings`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=add_edge_bearings#osmnx.bearing.add_edge_bearings)
 
 
-Nota: `networkx` està implementat directament en Python i no és bastant lent. Què fi farem...
+Nota: `networkx` està implementat directament en Python i és bastant lent. Què fi farem...
 
 
 ## Indicacions per llegirs URLs en CSV
