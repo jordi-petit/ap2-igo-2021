@@ -300,7 +300,7 @@ Els qui decidiu fer el segon projecte en un equip de dos estudiants, envieu
 abans de les **23:59 del dia XYZ** un missatge al professor Jordi Petit
 amb aquestes característiques:
 
-- des del compte `@estudiantat.upc.edu` d'un dels dos membres,
+- des del compte `@estudiantat.upc.edu` del membre més jove de l'equip,
 - amb tema (subject) `Equips AP2 2021`,
 - amb el nom dels dos estudiants de l'equip al cos del missatge,
 - fent còpia (CC) al compte `@estudiantat.upc.edu` de l'altre estudiant.
