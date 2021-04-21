@@ -297,7 +297,7 @@ resultat final és responsabilitat d'ambdós. Cada membre de l'equip ha de saber
 què ha fet l'altre membre.
 
 Els qui decidiu fer el segon projecte en un equip de dos estudiants, envieu
-abans de les **23:59 del dia XYZ** un missatge al professor Jordi Petit
+abans de les **23:59 del divendres 30 d'abril** un missatge al professor Jordi Petit
 amb aquestes característiques:
 
 - des del compte `@estudiantat.upc.edu` del membre més jove de l'equip,
@@ -314,7 +314,7 @@ pràctica junts (i no s'admetràn "divorcis").
 
 Heu de lliurar la vostra pràctica al Racó. Si heu fet la pràctica en equip,
 només el membre més jove ha de fer el lliurament. El termini de lliurament és
-el **XYZ**.
+el **dilluns 31 de maig a les 23:59**.
 
 Només heu de lliurar un fitxer ZIP que, al descomprimir-se,
 generi els fitxers següents:
