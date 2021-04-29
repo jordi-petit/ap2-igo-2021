@@ -272,7 +272,7 @@ A banda, segurament haureu d'utilitzar aquestes funcions per treballar amb grafs
 Notes: 
 
 - El paquet `networkx` està implementat directament en Python i és bastant lent. Què fi farem...
-- 
+
 - Alguns m'heu dit que que `plot_graph` deixa de funcionar amb graf un cop fet el `get_digraph`.
 
 
