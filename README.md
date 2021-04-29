@@ -200,21 +200,22 @@ Utilitzeu les llibreries de Python següents:
 
 - `csv` per llegir en format CSV.
 - `pickle` per llegir/escriure dades en Python de/en fitxers.
+- `urllib` per descarregar fitxers des de la web.
 - `networkx` per a manipular grafs.
 - `osmnx` per a obtenir grafs de llocs.
-- `urlib` per descarregar fitxers des de la web.
 - `haversine` per a calcular distàncies entre coordenades.
 - `staticmap` per pintar mapes.
 - `python-telegram-bot` per interactuar amb Telegram.
 
-Totes aquesta llibreries es poden instal·lar amb `pip3 install`, però `osmnx`
-porta una mica de feina... En Ubuntu, cal primer fer un `apt install
+Les tres primeres són estàndards i no cal que feu res per tenir-les.
+Les altres llibreries es poden instal·lar amb `pip3 install` o `sudo pip3 install`, però `osmnx`
+porta una mica de feina... En Ubuntu, cal primer fer un `sudo apt install
 libspatialindex-dev`. En Mac, cal fer un `brew install spatialindex gdal` i, a
 més, posar les darreres versions dels instal·ladors:
 
-1. `pip install --upgrade pip setuptools wheel`
-2. `pip install --upgrade osmnx`
-3. `pip install --upgrade staticmap`
+1. `pip3 install --upgrade pip setuptools wheel`
+2. `pip3 install --upgrade osmnx`
+3. `pip3 install --upgrade staticmap`
 
 Podeu utilitzar lliurament altres llibreries estàndards de Python, però si no
 són estàndards, heu de demanar permís als vostres professors (que segurament no
@@ -268,7 +269,11 @@ A banda, segurament haureu d'utilitzar aquestes funcions per treballar amb grafs
 - [`add_edge_bearings`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=add_edge_bearings#osmnx.bearing.add_edge_bearings)
 
 
-Nota: `networkx` està implementat directament en Python i és bastant lent. Què fi farem...
+Notes: 
+
+- El paquet `networkx` està implementat directament en Python i és bastant lent. Què fi farem...
+- 
+- Alguns m'heu dit que que `plot_graph` deixa de funcionar amb graf un cop fet el `get_digraph`.
 
 
 ## Indicacions per llegirs URLs en CSV
