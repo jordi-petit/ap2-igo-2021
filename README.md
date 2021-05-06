@@ -275,6 +275,13 @@ Notes:
 
 - Alguns m'heu dit que que `plot_graph` deixa de funcionar amb graf un cop fet el `get_digraph`.
 
+- Els qui teniu Ubuntu sobre Windows,  `plot_graph` no sembla funcionar, potser perquè deu tenir alguna limitació que li impedeix mostrar gràfics per la pantalla. En aquest cas, deseu la imatge en un fitxer:
+
+    ```python
+    g = osmnx.graph_from_place('Vic, Catalonia')
+    osmnx.plot_graph(g, show=False, save=True, filepath='vic.png')
+    ```
+
 
 ## Indicacions per llegirs URLs en CSV
 
