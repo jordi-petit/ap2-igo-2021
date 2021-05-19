@@ -262,7 +262,8 @@ valors absents o nuls... Molt divertit!
 
 A banda, segurament haureu d'utilitzar aquestes funcions per treballar amb grafs:
 
-- [`get_nearest_node`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=get_nearest_node#osmnx.distance.get_nearest_node)
+- [`get_nearest_node`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=get_nearest_node#osmnx.distance.get_nearest_node) ❌ deprecated
+- [`nearest_nodes`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=nearest_nodes#osmnx.distance.nearest_nodes) ✅ cal instal·lr també `scikit-learn`
 - [`shortest_path`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=shortest_path#osmnx.distance.shortest_path)
 - [`geocode`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=geocode#osmnx.geocoder.geocode)
 - [`plot_graph`](https://osmnx.readthedocs.io/en/stable/osmnx.html?highlight=plot_graph#osmnx.plot.plot_graph)
